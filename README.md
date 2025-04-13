@@ -1,70 +1,138 @@
-# Getting Started with Create React App
+# Routing using react-router Part 2
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- API Calls
+  - Using fetch()
+- Third-Party Packages
+  - react-loader-spinner
 
-## Available Scripts
 
-In the project directory, you can run:
+1.Make Api call using fetch()
+2.Set Blog data to state
+3.show loader while fetching data
 
-### `npm start`
+making Api call => componentDidMount() step(1)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+class BlogsList extends Component {
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+  componentDidMount() {
+    this.getBlogsData()
+  
+  }
+  
+  getBlogsData = async() =>{
+    const response = await fetch('url') // step 2 add fetch
+    const data = await response.json // step 3 getting json data
+   
+  }
+  render() {
+    return (
+      <div className="blog-list-container">
+        {blogsData.map(item => (
+          <BlogItem blogData={item} key={item.id} />
+        ))}
+      </div>
+    )
+  }
+}
 
-### `npm test`
+export default BlogsList
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+step 4 converting snake case to camel case 
 
-### `npm run build`
+getBlogsData = async() =>{
+    const response = await fetch('https://apis.ccbp.in/blogs')
+    const data = await response.json
+    const updatingData = data.map((each) =>({
+      id : each.id,
+      imageUrl : each.image_url,
+      title : each.title,
+      avatarUrl : each.avatar_url,
+      author : each.author,
+      topic : each.topic,
+    }))
+   
+  }
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+  
+class BlogsList extends Component {
+state = {
+  blogsData : [], //setting state step(5)
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  componentDidMount() {
+    this.getBlogsData()
+  
+  }
+  
+  getBlogsData = async() =>{
+    const response = await fetch('https://apis.ccbp.in/blogs')
+    const data = await response.json()
+    const updatingData = data.map((each) =>({
+      id : each.id,
+      imageUrl : each.image_url,
+      title : each.title,
+      avatarUrl : each.avatar_url,
+      author : each.author,
+      topic : each.topic,
+    }))
+    this.setState({blogsData : updatingData}) // upadating setstate (6)
+  }
+  render() {
+    const {blogsData} = this.state // accessing state step(7)
+    return (
+      <div className="blog-list-container">
+        {blogsData.map(item => (
+          <BlogItem blogData={item} key={item.id} />
+        ))}
+      </div>
+    )
+  }
+}
 
-### `npm run eject`
+export default BlogsList
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+installing react spinner:
+npm install react-loader-spinner@5.3.4 --legacy-peer-deps
+router npm install react-router-dom@5
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+importing react load spinner:
+import Loader from 'react-loader-spinner'
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css' //step(8)
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+initialize state step(9):
+state = {
+  blogsData : [],
+  isLoading : true,
+}
 
-## Learn More
+adding loader (10):
+ render() {
+    const {blogsData , isLoading} = this.state
+    return (
+      <div className="blog-list-container">
+      {isLoading ? 
+      <Loader type ='TailSpin' color='#00BFF' height={50} width={50}/>:
+      blogsData.map(item => 
+          <BlogItem blogData={item} key={item.id} />
+        )} // adding loader
+       
+      </div>
+    )
+  }
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+add setState step(11):
+getBlogsData = async () => {
+    const response = await fetch('https://apis.ccbp.in/blogs')
+    const data = await response.json()
+    const formattedData = data.map(eachItem => ({
+      id: eachItem.id,
+      title: eachItem.title,
+      imageUrl: eachItem.image_url,
+      avatarUrl: eachItem.avatar_url,
+      author: eachItem.author,
+      topic: eachItem.topic,
+    }))
+    this.setState({blogsData: formattedData, isLoading: false})
+  }
