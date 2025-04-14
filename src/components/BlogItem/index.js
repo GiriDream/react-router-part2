@@ -1,9 +1,11 @@
+import {Link} from 'react-router-dom'
 import './index.css'
 
 const BlogItem = props => {
   const {blogData} = props
   const {id, imageUrl, topic, title, avatarUrl, author} = blogData
   return (
+    <Link className='blog-item-link' to = {`/blogs/${id}`}>
     <div className="item-container">
       <img className="item-image" src={imageUrl} alt={`item${id}`} />
 
@@ -17,6 +19,7 @@ const BlogItem = props => {
         </div>
       </div>
     </div>
+    </Link>
   )
 }
 
